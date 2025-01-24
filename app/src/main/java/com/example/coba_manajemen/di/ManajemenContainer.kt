@@ -1,9 +1,12 @@
 package com.example.coba_manajemen.di
 
+import com.example.coba_manajemen.repository.AnggotaTimRepository
+import com.example.coba_manajemen.repository.NetworkAnggotaTimRepository
 import com.example.coba_manajemen.repository.NetworkProyekRepository
 import com.example.coba_manajemen.repository.NetworkTimRepository
 import com.example.coba_manajemen.repository.ProyekRepository
 import com.example.coba_manajemen.repository.TimRepository
+import com.example.coba_manajemen.service_api.AnggotaTimService
 import com.example.coba_manajemen.service_api.ProyekService
 import com.example.coba_manajemen.service_api.TimService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -14,6 +17,7 @@ import retrofit2.Retrofit
 interface AppContainer {
     val proyekRepository: ProyekRepository
     val timRepository: TimRepository
+    val anggotaTimRepository: AnggotaTimRepository
 }
 
 class ManajemenContainer : AppContainer {
@@ -40,6 +44,14 @@ class ManajemenContainer : AppContainer {
     }
     override val timRepository: TimRepository by lazy {
         NetworkTimRepository(timService)
+    }
+
+    //ANGGOTA
+    private val anggotaTimService: AnggotaTimService by lazy {
+        retrofit.create(AnggotaTimService::class.java)
+    }
+    override val anggotaTimRepository: AnggotaTimRepository by lazy {
+        NetworkAnggotaTimRepository(anggotaTimService)
     }
 }
 
