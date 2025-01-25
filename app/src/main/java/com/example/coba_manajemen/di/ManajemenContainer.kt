@@ -4,11 +4,14 @@ import com.example.coba_manajemen.repository.AnggotaTimRepository
 import com.example.coba_manajemen.repository.NetworkAnggotaTimRepository
 import com.example.coba_manajemen.repository.NetworkProyekRepository
 import com.example.coba_manajemen.repository.NetworkTimRepository
+import com.example.coba_manajemen.repository.NetworkTugasRepository
 import com.example.coba_manajemen.repository.ProyekRepository
 import com.example.coba_manajemen.repository.TimRepository
+import com.example.coba_manajemen.repository.TugasRepository
 import com.example.coba_manajemen.service_api.AnggotaTimService
 import com.example.coba_manajemen.service_api.ProyekService
 import com.example.coba_manajemen.service_api.TimService
+import com.example.coba_manajemen.service_api.TugasService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -18,6 +21,7 @@ interface AppContainer {
     val proyekRepository: ProyekRepository
     val timRepository: TimRepository
     val anggotaTimRepository: AnggotaTimRepository
+    val tugasRepository: TugasRepository
 }
 
 class ManajemenContainer : AppContainer {
@@ -52,6 +56,14 @@ class ManajemenContainer : AppContainer {
     }
     override val anggotaTimRepository: AnggotaTimRepository by lazy {
         NetworkAnggotaTimRepository(anggotaTimService)
+    }
+
+    //TUGAS
+    private val tugasService: TugasService by lazy {
+        retrofit.create(TugasService::class.java)
+    }
+    override val tugasRepository: TugasRepository by lazy {
+        NetworkTugasRepository(tugasService)
     }
 }
 
