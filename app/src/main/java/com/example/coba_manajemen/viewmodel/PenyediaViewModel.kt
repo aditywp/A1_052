@@ -10,6 +10,10 @@ import com.example.coba_manajemen.viewmodel.proyek.DetailProyekViewModel
 import com.example.coba_manajemen.viewmodel.proyek.HomeProyekViewModel
 import com.example.coba_manajemen.viewmodel.proyek.InsertProyekViewModel
 import com.example.coba_manajemen.viewmodel.proyek.UpdateProyekViewModel
+import com.example.coba_manajemen.viewmodel.tim.DetailTimViewModel
+import com.example.coba_manajemen.viewmodel.tim.HomeTimViewModel
+import com.example.coba_manajemen.viewmodel.tim.InsertTimViewModel
+import com.example.coba_manajemen.viewmodel.tim.UpdateTimViewModel
 
 
 object PenyediaViewModel {
@@ -27,6 +31,21 @@ object PenyediaViewModel {
             UpdateProyekViewModel(
                 createSavedStateHandle(),
                 aplikasiManajemen().container.proyekRepository
+            )
+        }
+        //HOME TIM
+        initializer { HomeTimViewModel(aplikasiManajemen().container.timRepository) }
+        initializer { InsertTimViewModel(aplikasiManajemen().container.timRepository) }
+        initializer {
+            DetailTimViewModel(
+                createSavedStateHandle(),
+                aplikasiManajemen().container.timRepository
+            )
+        }
+        initializer {
+            UpdateTimViewModel(
+                createSavedStateHandle(),
+                aplikasiManajemen().container.timRepository
             )
         }
     }
