@@ -148,7 +148,7 @@ fun FormInput(
         Dropdown(
             selectedValue = insertUiEvent.statusProyek,
             options = statusOption,
-            label = "Pilih Peran",
+            label = "Status Proyek",
             onValueChangedEvent = { newStatus->
                 onValueChange(insertUiEvent.copy(statusProyek = newStatus))
             }
