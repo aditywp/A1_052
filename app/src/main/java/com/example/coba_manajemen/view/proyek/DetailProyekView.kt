@@ -4,13 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,30 +82,71 @@ fun DetailProyekScreen(
                 ) {
                     FloatingActionButton(
                         onClick = navigateToSeeTugas,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = Color.Black
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountBox,
-                            contentDescription = "Melihat Tugas"
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Lihat Tugas",
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
+                            Text(
+                                text = "LIHAT TUGAS",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White
+                            )
+                        }
                     }
                     FloatingActionButton(
                         onClick = navigateToAddTugas,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = Color.Black
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Edit Proyek"
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Lihat Tugas",
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
+                            Text(
+                                text = "TAMBAH TUGAS",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White
+                            )
+                        }
                     }
                     FloatingActionButton(
                         onClick = navigateToItemUpdate,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Proyek"
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Lihat Tugas",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
+                            Text(
+                                text = "EDIT PROYEK",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
@@ -150,17 +198,18 @@ fun ItemDetailProyek(
     Card(
         modifier = modifier.padding(16.dp),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            ComponentDetailPryk(judul = "ID Proyek", detail = proyek.idProyek.toString())
-            ComponentDetailPryk(judul = "Nama Proyek", detail = proyek.namaProyek)
-            ComponentDetailPryk(judul = "Deskripsi Proyek", detail = proyek.deskripsiProyek)
-            ComponentDetailPryk(judul = "Tanggal Mulai", detail = proyek.tanggalMulai)
-            ComponentDetailPryk(judul = "Tanggal Selesai", detail = proyek.tanggalBerakhir)
-            ComponentDetailPryk(judul = "Status Proyek", detail = proyek.statusProyek)
+            ComponentDetailPryk(judul = "ID Proyek", detail = proyek.idProyek.toString(),icon = Icons.Default.Edit)
+            ComponentDetailPryk(judul = "Nama Proyek", detail = proyek.namaProyek, icon = Icons.Default.AccountBox)
+            ComponentDetailPryk(judul = "Deskripsi Proyek", detail = proyek.deskripsiProyek, icon =  Icons.Default.Info)
+            ComponentDetailPryk(judul = "Tanggal Mulai", detail = proyek.tanggalMulai, icon = Icons.Default.DateRange)
+            ComponentDetailPryk(judul = "Tanggal Selesai", detail = proyek.tanggalBerakhir, icon = Icons.Default.DateRange)
+            ComponentDetailPryk(judul = "Status Proyek", detail = proyek.statusProyek, icon = Icons.Default.CheckCircle)
         }
     }
 }
@@ -169,21 +218,35 @@ fun ItemDetailProyek(
 fun ComponentDetailPryk(
     modifier: Modifier = Modifier,
     judul: String,
-    detail: String
+    detail: String,
+    icon: ImageVector
 ){
     Column(modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start)
     {
-        Text(
-            text = "$judul:",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Magenta
-        )
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.Blue
+            )
+            Text(
+                text = "$judul:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Blue
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = detail,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
         )
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }

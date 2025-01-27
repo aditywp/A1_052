@@ -5,16 +5,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.coba_manajemen.R
 import com.example.coba_manajemen.model.Proyek
@@ -57,18 +64,29 @@ fun HomeProyekScreen(
             FloatingActionButton(
                 onClick = navigateToItemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
+                modifier = Modifier.padding(18.dp),
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Proyek"
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Proyek",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
+                    Text(
+                        text = "TAMBAH PROYEK",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Black
+                    )
+                }
             }
         },
         bottomBar = {
             // ButtonBar sebagai Bottom Bar
             ButtonBar(
-                navigateToItemEntry = navigateToItemEntry,
                 navigateToTim = navigateToTim,
                 navigateToTugas = navigateToTugas,
                 navigateToAnggota = navigateToAnggota
@@ -92,7 +110,6 @@ fun HomeProyekScreen(
 
 @Composable
 fun ButtonBar(
-    navigateToItemEntry: () -> Unit = {},
     navigateToTim: () -> Unit = {},
     navigateToTugas: () -> Unit = {},
     navigateToAnggota: () -> Unit = {},
@@ -106,37 +123,65 @@ fun ButtonBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = navigateToItemEntry,
-            modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
-        ) {
-            Text(text = "Tambah Proyek")
-        }
-
-        Button(
             onClick = navigateToTim,
-            modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+            modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = "Manajemen TIM")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val timIcon: Painter = painterResource(id = R.drawable.tim)
+                Icon(
+                    painter = timIcon,
+                    contentDescription = "Manajemen Tim",
+                    modifier = Modifier.size(50.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Manajemen TIM")
+            }
         }
 
         Button(
             onClick = navigateToTugas,
-            modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+            modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = "Manajemen Tugas")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                val tugasIcon: Painter = painterResource(id = R.drawable.tugas)
+                Icon(
+                    painter = tugasIcon,
+                    contentDescription = "Manajemen Tugas",
+                    modifier = Modifier.size(50.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Manajemen Tugas")
+            }
         }
 
         Button(
             onClick = navigateToAnggota,
-            modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+            modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = "Manajemen Anggota ")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Manajemen Anggota",
+                    modifier = Modifier.size(50.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Manajemen Anggota")
+            }
         }
     }
 }
-
-
-
 
 @Composable
 fun HomeProyekStatus(
@@ -235,41 +280,81 @@ fun ProyekCard(
 ) {
     var deleteConfirmationRequired by remember { mutableStateOf(false) }
     Card(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = proyek.namaProyek,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = { deleteConfirmationRequired = true }) {
+            Column(modifier = Modifier.fillMaxWidth())
+            {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = null
+                        imageVector = Icons.Default.Build,
+                        contentDescription = "Tim Icon",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Blue
+
+                        )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Proyek: ${proyek.namaProyek}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black
                     )
                 }
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = proyek.idProyek.toString(),
-                    style = MaterialTheme.typography.titleMedium
+                    text = "ID: ${proyek.idProyek}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Deskripsi: ${proyek.deskripsiProyek}",
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Status: ${proyek.statusProyek}",
+                    fontSize = 14.sp,
+                    color = Color.Black
                 )
             }
-            Text(
-                text = proyek.deskripsiProyek,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(
+                        onClick = { deleteConfirmationRequired = true },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Project",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+            }
         }
     }
-
     if (deleteConfirmationRequired) {
         DeleteConfirmationDialog(
             onDeleteConfirm = {

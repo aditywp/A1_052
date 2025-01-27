@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -42,10 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.coba_manajemen.R
 import com.example.coba_manajemen.model.AnggotaTim
@@ -222,64 +224,85 @@ fun AnggotaCard(
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
 
     Card(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.large,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Anggota Icon",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = anggota.namaAnggota,
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = { deleteConfirmationRequired = true }) {
+            Column(modifier = Modifier.fillMaxWidth())
+            {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.error
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Anggota Icon",
+                        modifier = Modifier.size(24.dp),
+                        tint = colorResource(id = R.color.green)
+                        )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Anggota: ${anggota.namaAnggota}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Black
                     )
                 }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "ID: ${anggota.idAnggota}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Peran: ${anggota.peran}",
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
             }
-            Text(
-                text = "Peran: ${anggota.peran}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = "ID Tim: ${anggota.idTim}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IconButton(
+                        onClick = { deleteConfirmationRequired = true },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Project",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+            }
         }
-
-        if (deleteConfirmationRequired) {
-            DeleteConfirmationDialog(
-                onDeleteConfirm = {
-                    deleteConfirmationRequired = false
-                    onDeleteClick(anggota)
-                },
-                onDeleteCancel = {
-                    deleteConfirmationRequired = false
-                },
-                modifier = Modifier.padding(8.dp)
-            )
-        }
+    }
+    if (deleteConfirmationRequired) {
+        DeleteConfirmationDialog(
+            onDeleteConfirm = {
+                deleteConfirmationRequired = false
+                onDeleteClick(anggota)
+            },
+            onDeleteCancel = {
+                deleteConfirmationRequired = false
+            },
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 

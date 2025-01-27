@@ -1,12 +1,20 @@
 package com.example.coba_manajemen.view.anggotatim
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,10 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.coba_manajemen.R
 import com.example.coba_manajemen.model.AnggotaTim
 import com.example.coba_manajemen.model.Tim
 import com.example.coba_manajemen.viewmodel.PenyediaViewModel
@@ -128,15 +139,15 @@ fun ItemDetailAnggota(
         modifier = modifier.padding(16.dp),
         shape = MaterialTheme.shapes.large, // Rounded corners
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            ComponentDetailAnggota(judul = "ID Anggota", detail = anggota.idAnggota.toString())
-            ComponentDetailAnggota(judul = "Nama Tim", detail = tim)
-            ComponentDetailAnggota(judul = "Nama Anggota", detail = anggota.namaAnggota)
-            ComponentDetailAnggota(judul = "Peran", detail = anggota.peran)
+            ComponentDetailAnggota(judul = "ID Anggota", detail = anggota.idAnggota.toString(), icon = Icons.Default.Edit)
+            ComponentDetailAnggota(judul = "Nama Tim", detail = tim, icon = Icons.Default.AccountBox)
+            ComponentDetailAnggota(judul = "Nama Anggota", detail = anggota.namaAnggota, icon = Icons.Default.Person)
+            ComponentDetailAnggota(judul = "Peran", detail = anggota.peran, icon = Icons.Default.Star)
         }
     }
 }
@@ -145,24 +156,37 @@ fun ItemDetailAnggota(
 fun ComponentDetailAnggota(
     modifier: Modifier = Modifier,
     judul: String,
-    detail: String
+    detail: String,
+    icon: ImageVector
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
-        Text(
-            text = "$judul:",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary, // Primary color for title
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = colorResource(id = R.color.green)
+            )
+            Text(
+                text = "$judul:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.green),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = detail,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
             color = Color.DarkGray
         )
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
