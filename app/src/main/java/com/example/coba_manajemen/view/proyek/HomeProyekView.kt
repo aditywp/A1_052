@@ -118,7 +118,8 @@ fun ButtonBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .navigationBarsPadding(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -135,7 +136,7 @@ fun ButtonBar(
                 Icon(
                     painter = timIcon,
                     contentDescription = "Manajemen Tim",
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(30.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen TIM")
@@ -155,7 +156,7 @@ fun ButtonBar(
                 Icon(
                     painter = tugasIcon,
                     contentDescription = "Manajemen Tugas",
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(30.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen Tugas")
@@ -174,7 +175,7 @@ fun ButtonBar(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Manajemen Anggota",
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(30.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen Anggota")
@@ -281,8 +282,7 @@ fun ProyekCard(
     var deleteConfirmationRequired by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
