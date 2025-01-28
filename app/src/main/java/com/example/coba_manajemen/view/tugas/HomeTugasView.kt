@@ -1,8 +1,6 @@
 package com.example.coba_manajemen.view.tugas
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +19,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -46,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +59,6 @@ import com.example.coba_manajemen.ui.navigation.DestinasiNavigasi
 import com.example.coba_manajemen.viewmodel.tugas.HomeTugasUiState
 import com.example.coba_manajemen.viewmodel.tugas.HomeTugasViewModel
 import com.example.serverdatabasep12.ui.widget.CostumeTopAppBar
-import okhttp3.internal.wait
 
 object DestinasiTugasHome: DestinasiNavigasi {
     override val route = "home_Tugas"
@@ -72,7 +71,8 @@ fun HomeTugasScreen(
     navigateToAddTugasEntry: () -> Unit,
     navigateToBack: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
+    onDetailClick: (Int) -> Unit = {},
+    onUpdateClick: (Int) -> Unit = {},
     viewModel: HomeTugasViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -93,22 +93,27 @@ fun HomeTugasScreen(
             FloatingActionButton(
                 onClick = navigateToAddTugasEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
+                modifier = Modifier
+                    .padding(18.dp)
+                    .width(150.dp)
+                    .height(30.dp),
+                containerColor = colorResource(id = R.color.green)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Proyek",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
                     Text(
-                        text = "TAMBAH TUGAS",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Black
+                        text = "TAMBAH PROYEK",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
                     )
                 }
             }
@@ -119,6 +124,7 @@ fun HomeTugasScreen(
             retryAction = {viewModel.getallTugas()},
             modifier = Modifier.padding(innerPadding),
             onDetailClick= onDetailClick,
+            onUpdateClick = onUpdateClick,
             onDeleteClick = {
                 viewModel.deleteTugas(it.idTugas)
                 viewModel.getallTugas()
@@ -132,8 +138,9 @@ fun HomeTugasStatus(
     homeTugasUiState: HomeTugasUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
-    onDeleteClick: (Tugas) -> Unit = {}
+    onDetailClick: (Int) -> Unit = {},
+    onDeleteClick: (Tugas) -> Unit = {},
+    onUpdateClick: (Int) -> Unit
 ){
     when(homeTugasUiState) {
         is HomeTugasUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -150,11 +157,12 @@ fun HomeTugasStatus(
                 TugasLayout(
                     tugas = homeTugasUiState.tugas,
                     modifier = modifier.fillMaxWidth(),
-                    onDetailTugas = { onDetailClick(it.idTugas.toString())
+                    onDetailTugas = { onDetailClick(it.idTugas)
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateClick = {onUpdateClick(it.idTugas)}
                 )
             }
         is HomeTugasUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -200,7 +208,8 @@ fun TugasLayout(
     tugas: List<Tugas>,
     modifier: Modifier = Modifier,
     onDetailTugas: (Tugas) -> Unit,
-    onDeleteClick: (Tugas) -> Unit = {}
+    onDeleteClick: (Tugas) -> Unit = {},
+    onUpdateClick: (Tugas) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -213,7 +222,9 @@ fun TugasLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailTugas(tugasItem) },
-                onDeleteClick = { onDeleteClick(tugasItem) }
+                onDeleteClick = { onDeleteClick(tugasItem) },
+                onDetailClick = {onDetailTugas(tugasItem)},
+                onUpdateClick = {onUpdateClick(tugasItem)}
             )
         }
     }
@@ -224,7 +235,9 @@ fun TugasLayout(
 fun TugasCard(
     tugas: Tugas,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Tugas) -> Unit = {}
+    onDeleteClick: (Tugas) -> Unit = {},
+    onDetailClick: (Tugas) -> Unit,
+    onUpdateClick: (Tugas) -> Unit
 ){
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
     Card (
@@ -260,6 +273,10 @@ fun TugasCard(
                         color = Color.Black
                     )
                 }
+                Divider(
+                    thickness = 2.dp,
+                    modifier = Modifier.padding(12.dp)
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "ID: ${tugas.idTugas}",
@@ -279,17 +296,36 @@ fun TugasCard(
                     fontSize = 14.sp,
                     color = Color.Black
                 )
-            }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { onDetailClick(tugas) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Detail"
+                        )
+                    }
+                    Button(
+                        onClick = { onUpdateClick(tugas) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Update"
+                        )
+                    }
                     IconButton(
                         onClick = { deleteConfirmationRequired = true },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

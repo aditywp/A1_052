@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -246,6 +247,10 @@ fun ComponentDetailPryk(
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black
+        )
+        Divider(
+            thickness = 2.dp,
+            modifier = Modifier.padding(12.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
     }

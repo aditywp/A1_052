@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +23,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -68,18 +71,16 @@ fun HomeAnggotaScreen(
     navigateToAddAnggotaEntry: () -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
+    onDetailClick: (Int) -> Unit = {},
+    onUpdateClick: (Int) -> Unit = {},
     viewModel: HomeAnggotaTimViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
             CostumeTopAppBar(
                 title = DestinasiAnggotaHome.titleRes,
                 canNavigateBack = true,
-                scrollBehavior = scrollBehavior,
                 navigateUp = navigateBack,
                 onRefresh = {
                     viewModel.getallAnggotaTim()
@@ -90,23 +91,26 @@ fun HomeAnggotaScreen(
             FloatingActionButton(
                 onClick = navigateToAddAnggotaEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
-                containerColor = MaterialTheme.colorScheme.primary
+                modifier = Modifier
+                    .padding(18.dp)
+                    .width(150.dp)
+                    .height(30.dp),
+                containerColor = colorResource(id = R.color.green)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add Anggota",
+                        contentDescription = "Add Proyek",
                         modifier = Modifier.size(24.dp),
                         tint = Color.White
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
                     Text(
-                        text = "TAMBAH ANGGOTA",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = "TAMBAH PROYEK",
+                        style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
                     )
                 }
@@ -118,6 +122,7 @@ fun HomeAnggotaScreen(
             retryAction = { viewModel.getallAnggotaTim() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
+            onUpdateClick = onUpdateClick,
             onDeleteClick = { viewModel.deleteAnggotaTim(it.idTim) }
         )
     }
@@ -128,8 +133,9 @@ fun HomeAnggotaStatus(
     homeAnggotaTimUiState: HomeAnggotaTimUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
-    onDeleteClick: (AnggotaTim) -> Unit = {}
+    onDetailClick: (Int) -> Unit = {},
+    onDeleteClick: (AnggotaTim) -> Unit = {},
+    onUpdateClick: (Int) -> Unit
 ) {
     when (homeAnggotaTimUiState) {
         is HomeAnggotaTimUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -146,8 +152,9 @@ fun HomeAnggotaStatus(
                 AnggotaLayout(
                     anggota = homeAnggotaTimUiState.anggota,
                     modifier = modifier.fillMaxWidth(),
-                    onDetail = { onDetailClick(it.idAnggota.toString()) },
-                    onDeleteClick = onDeleteClick
+                    onDetailClick = { onDetailClick(it.idAnggota) },
+                    onDeleteClick = onDeleteClick,
+                    onUpdateClick = {onUpdateClick(it.idAnggota)}
                 )
             }
         }
@@ -194,8 +201,9 @@ fun OnError(
 fun AnggotaLayout(
     anggota: List<AnggotaTim>,
     modifier: Modifier = Modifier,
-    onDetail: (AnggotaTim) -> Unit,
-    onDeleteClick: (AnggotaTim) -> Unit = {}
+    onDetailClick: (AnggotaTim) -> Unit,
+    onDeleteClick: (AnggotaTim) -> Unit = {},
+    onUpdateClick: (AnggotaTim) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -207,8 +215,10 @@ fun AnggotaLayout(
                 anggota = agtItem,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onDetail(agtItem) },
-                onDeleteClick = { onDeleteClick(agtItem) }
+                    .clickable { onDetailClick(agtItem) },
+                onDeleteClick = { onDeleteClick(agtItem) },
+                onUpdateClick = { onUpdateClick(agtItem)},
+                onDetailClick = { onDetailClick(agtItem) }
             )
         }
     }
@@ -219,7 +229,9 @@ fun AnggotaLayout(
 fun AnggotaCard(
     anggota: AnggotaTim,
     modifier: Modifier = Modifier,
-    onDeleteClick: (AnggotaTim) -> Unit = {}
+    onDeleteClick: (AnggotaTim) -> Unit,
+    onDetailClick: (AnggotaTim) -> Unit,
+    onUpdateClick: (AnggotaTim) -> Unit
 ) {
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
 
@@ -256,6 +268,10 @@ fun AnggotaCard(
                         color = Color.Black
                     )
                 }
+                Divider(
+                    thickness = 2.dp,
+                    modifier = Modifier.padding(12.dp)
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "ID: ${anggota.idAnggota}",
@@ -269,17 +285,36 @@ fun AnggotaCard(
                     fontSize = 14.sp,
                     color = Color.Black
                 )
-            }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { onDetailClick(anggota) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Detail"
+                        )
+                    }
+                    Button(
+                        onClick = { onUpdateClick(anggota) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Update"
+                        )
+                    }
                     IconButton(
                         onClick = { deleteConfirmationRequired = true },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

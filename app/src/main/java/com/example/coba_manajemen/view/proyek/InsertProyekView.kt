@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,8 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.coba_manajemen.R
 import com.example.coba_manajemen.ui.navigation.DestinasiNavigasi
 import com.example.coba_manajemen.viewmodel.PenyediaViewModel
 import com.example.coba_manajemen.viewmodel.proyek.InsertProyekViewModel
@@ -92,7 +95,8 @@ fun EntryBody(
         Button(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green))
         ) {
             Text("Simpan")
         }
@@ -153,16 +157,6 @@ fun FormInput(
                 onValueChange(insertUiEvent.copy(statusProyek = newStatus))
             }
 
-        )
-        if (enabled) {
-            Text(
-                text = "isi Semua Data!",
-                modifier = Modifier.padding(12.dp)
-            )
-        }
-        Divider(
-            thickness = 8.dp,
-            modifier = Modifier.padding(12.dp)
         )
     }
 }

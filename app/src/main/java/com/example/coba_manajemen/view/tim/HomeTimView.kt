@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +23,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +71,8 @@ fun HomeTimScreen(
     navigateToAddTimEntry: () -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailTimClick: (String) -> Unit = {},
+    onDetailTimClick: (Int) -> Unit = {},
+    onUpdateTimClick: (Int) -> Unit = {},
     viewModel: HomeTimViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -88,22 +93,27 @@ fun HomeTimScreen(
             FloatingActionButton(
                 onClick = navigateToAddTimEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
+                modifier = Modifier
+                    .padding(18.dp)
+                    .width(150.dp)
+                    .height(30.dp),
+                containerColor = colorResource(id = R.color.green)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Proyek",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
                     Text(
-                        text = "TAMBAH TIM",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Black
+                        text = "TAMBAH PROYEK",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
                     )
                 }
             }
@@ -114,6 +124,7 @@ fun HomeTimScreen(
             retryAction = {viewModel.getallTim()},
             modifier = Modifier.padding(innerPadding),
             onDetailClickTim = onDetailTimClick,
+            onUpdateTimClick = onUpdateTimClick,
             onDeleteClick = {
                 viewModel.deleteTim(it.idTim)
                 viewModel.getallTim()
@@ -127,8 +138,9 @@ fun HomeTimStatus(
     homeTimUiState: HomeTimUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClickTim: (String) -> Unit = {},
-    onDeleteClick: (Tim) -> Unit = {}
+    onDetailClickTim: (Int) -> Unit = {},
+    onDeleteClick: (Tim) -> Unit = {},
+    onUpdateTimClick: (Int) -> Unit
 ){
     when(homeTimUiState) {
         is HomeTimUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -145,11 +157,12 @@ fun HomeTimStatus(
                 TimLayout(
                     tim = homeTimUiState.tim,
                     modifier = modifier.fillMaxWidth(),
-                    onDetailTIM = { onDetailClickTim(it.idTim.toString())
+                    onDetailTIM = { onDetailClickTim(it.idTim)
                     },
                     onDeleteClick = {
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateTimClick = {onUpdateTimClick(it.idTim)}
                 )
             }
         is HomeTimUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -195,7 +208,8 @@ fun TimLayout(
     tim: List<Tim>,
     modifier: Modifier = Modifier,
     onDetailTIM: (Tim) -> Unit,
-    onDeleteClick: (Tim) -> Unit = {}
+    onDeleteClick: (Tim) -> Unit = {},
+    onUpdateTimClick: (Tim) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -208,7 +222,9 @@ fun TimLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailTIM(timItem) },
-                onDeleteClick = { onDeleteClick(timItem) }
+                onDeleteClick = { onDeleteClick(timItem) },
+                onDetailClick = {onDetailTIM(timItem)},
+                onUpdateTimClick = {onUpdateTimClick(timItem)}
             )
         }
     }
@@ -219,7 +235,9 @@ fun TimLayout(
 fun TimCard(
     tim: Tim,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Tim) -> Unit = {}
+    onDeleteClick: (Tim) -> Unit = {},
+    onDetailClick: (Tim) -> Unit = {},
+    onUpdateTimClick: (Tim) -> Unit
 ){
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
 
@@ -257,6 +275,10 @@ fun TimCard(
                         color = Color.Black
                     )
                 }
+                Divider(
+                    thickness = 2.dp,
+                    modifier = Modifier.padding(12.dp)
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "ID: ${tim.idTim}",
@@ -270,17 +292,36 @@ fun TimCard(
                     fontSize = 14.sp,
                     color = Color.Black
                 )
-            }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { onDetailClick(tim) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Detail"
+                        )
+                    }
+                    Button(
+                        onClick = { onUpdateTimClick(tim) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Update"
+                        )
+                    }
                     IconButton(
                         onClick = { deleteConfirmationRequired = true },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,17 +44,16 @@ fun HomeProyekScreen(
     navigateToTugas: () -> Unit,
     navigateToAnggota: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit = {},
+    onDetailClick: (Int) -> Unit = {},
+    onEditClick: (Int) -> Unit,
     viewModel: HomeProyekViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
             CostumeTopAppBar(
                 title = DestinasiProyekHome.titleRes,
                 canNavigateBack = false,
-                scrollBehavior = scrollBehavior,
                 onRefresh = {
                     viewModel.getAllPryk()
                 }
@@ -64,7 +63,11 @@ fun HomeProyekScreen(
             FloatingActionButton(
                 onClick = navigateToItemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
+                modifier = Modifier
+                    .padding(18.dp)
+                    .width(150.dp)
+                    .height(30.dp),
+                containerColor = colorResource(id = R.color.green)
             ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -73,13 +76,14 @@ fun HomeProyekScreen(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Proyek",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))  // Menambah jarak antara ikon dan teks
                     Text(
                         text = "TAMBAH PROYEK",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Black
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
                     )
                 }
             }
@@ -104,7 +108,8 @@ fun HomeProyekScreen(
             onDeleteClick = {
                 viewModel.deletePryk(it.idProyek)
                 viewModel.getAllPryk()
-            }
+            },
+            onEditClick = onEditClick
         )
     }
 }
@@ -127,7 +132,8 @@ fun ButtonBar(
         Button(
             onClick = navigateToTim,
             modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green))
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,7 +143,8 @@ fun ButtonBar(
                 Icon(
                     painter = timIcon,
                     contentDescription = "Manajemen Tim",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.Black
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen TIM")
@@ -147,7 +154,8 @@ fun ButtonBar(
         Button(
             onClick = navigateToTugas,
             modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green))
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,7 +165,8 @@ fun ButtonBar(
                 Icon(
                     painter = tugasIcon,
                     contentDescription = "Manajemen Tugas",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.Black
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen Tugas")
@@ -167,7 +176,8 @@ fun ButtonBar(
         Button(
             onClick = navigateToAnggota,
             modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
+            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green))
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -176,7 +186,8 @@ fun ButtonBar(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Manajemen Anggota",
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
+                    tint = Color.Black
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Manajemen Anggota")
@@ -191,7 +202,8 @@ fun HomeProyekStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Proyek) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (Int) -> Unit,
+    onEditClick: (Int) -> Unit
 ) {
     when (homeUiState) {
         is HomeUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
@@ -208,8 +220,9 @@ fun HomeProyekStatus(
                 ProyekLayout(
                     proyek = homeUiState.proyek,
                     modifier = modifier.fillMaxWidth(),
-                    onDetailClick = { onDetailClick(it.idProyek.toString()) },
-                    onDeleteClick = { onDeleteClick(it) }
+                    onDetailClick = { onDetailClick(it.idProyek) },
+                    onDeleteClick = { onDeleteClick(it) },
+                    onEditClick = {onEditClick(it.idProyek)}
                 )
             }
         }
@@ -255,7 +268,8 @@ fun ProyekLayout(
     proyek: List<Proyek>,
     modifier: Modifier = Modifier,
     onDetailClick: (Proyek) -> Unit,
-    onDeleteClick: (Proyek) -> Unit = {}
+    onDeleteClick: (Proyek) -> Unit = {},
+    onEditClick: (Proyek) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier,
@@ -268,7 +282,9 @@ fun ProyekLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onDetailClick(proyekItem) },
-                onDeleteClick = { onDeleteClick(proyekItem) }
+                onDeleteClick = { onDeleteClick(proyekItem) },
+                onDetailClick = {onDetailClick(proyekItem) },
+                onEditClick = {onEditClick(proyekItem)}
             )
         }
     }
@@ -278,7 +294,9 @@ fun ProyekLayout(
 fun ProyekCard(
     proyek: Proyek,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Proyek) -> Unit = {}
+    onDeleteClick: (Proyek) -> Unit = {},
+    onDetailClick: (Proyek) -> Unit,
+    onEditClick: (Proyek) -> Unit
 ) {
     var deleteConfirmationRequired by remember { mutableStateOf(false) }
     Card(
@@ -314,6 +332,10 @@ fun ProyekCard(
                         color = Color.Black
                     )
                 }
+                Divider(
+                    thickness = 2.dp,
+                    modifier = Modifier.padding(12.dp)
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "ID: ${proyek.idProyek}",
@@ -333,17 +355,36 @@ fun ProyekCard(
                     fontSize = 14.sp,
                     color = Color.Black
                 )
-            }
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ){
+                    Button(
+                        onClick = { onDetailClick(proyek) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Detail"
+                        )
+                    }
+                    Button(
+                        onClick = { onEditClick(proyek) },
+                        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.green)),
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(100.dp)
+                    ){
+                        Text(
+                            text = "Update"
+                        )
+                    }
                     IconButton(
                         onClick = { deleteConfirmationRequired = true },
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

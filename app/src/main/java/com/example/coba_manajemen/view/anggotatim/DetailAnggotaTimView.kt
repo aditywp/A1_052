@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -186,6 +187,10 @@ fun ComponentDetailAnggota(
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Color.DarkGray
+        )
+        Divider(
+            thickness = 2.dp,
+            modifier = Modifier.padding(12.dp)
         )
         Spacer(modifier = Modifier.height(12.dp))
     }
