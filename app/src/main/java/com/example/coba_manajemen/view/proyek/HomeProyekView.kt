@@ -66,9 +66,9 @@ fun HomeProyekScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(18.dp),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -98,6 +98,7 @@ fun HomeProyekScreen(
             retryAction = { viewModel.getAllPryk() },
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(bottom = 100.dp)
                 .fillMaxSize(),
             onDetailClick = onDetailClick,
             onDeleteClick = {
