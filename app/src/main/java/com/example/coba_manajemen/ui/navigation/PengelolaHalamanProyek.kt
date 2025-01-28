@@ -58,6 +58,9 @@ fun PengelolaHalamanProyek(
                 navigateToAnggota = { navController.navigate(DestinasiAnggotaHome.route) },
                 onDetailClick = { idProyek ->
                     navController.navigate("${DestinasiProyekDetail.route}/$idProyek")
+                },
+                onEditClick = { idProyek ->
+                    navController.navigate("${DestinasiProyekUpdate.route}/$idProyek")
                 }
             )
         }
@@ -132,6 +135,9 @@ fun PengelolaHalamanProyek(
                 },
                 onDetailTimClick = { idTim ->
                     navController.navigate("${DestinasiTimDetail.route}/$idTim")
+                },
+                onUpdateTimClick = { idTim ->
+                    navController.navigate("${DestinasiTimUpdate.route}/$idTim")
                 }
             )
         }
@@ -199,6 +205,9 @@ fun PengelolaHalamanProyek(
                             inclusive = true
                         }
                     }
+                },
+                onUpdateClick = { idTugas ->
+                    navController.navigate("${DestinasiTugasUpdate.route}/$idTugas")
                 }
             )
         }
@@ -267,6 +276,9 @@ fun PengelolaHalamanProyek(
                             inclusive = true
                         }
                     }
+                },
+                onUpdateClick = { idAnggota ->
+                    navController.navigate("${DestinasiAnggotaUpdate.route}/$idAnggota")
                 }
             )
         }
